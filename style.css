@@ -1,0 +1,27 @@
+.background{
+    background:linear-gradient(to bottom,rgb(92, 92, 243),rgb(35, 35, 246));
+}
+.mid-section{
+    height: 600px;
+    overflow: auto;
+    width: 100vw;
+}
+.para{
+    background:linear-gradient(to bottom,rgb(92, 92, 243),rgb(35, 35, 246));
+    color: white !important;
+    padding: 30px;
+    width: 75%;
+}
+.mid-para{
+    text-align: center;
+    clear: both;
+    border: 2px solid rgb(237, 232, 232);
+    padding: 5px;
+}
+.first{
+    height: 90%;
+    overflow: auto;
+}
+.second{
+    height: 10%;
+}
