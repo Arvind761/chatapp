@@ -1,27 +1,33 @@
 const express = require("express");
+const http = require("http");
+const { Server } = require("socket.io");
+const path = require("path");
+
 const app = express();
-const http = require("http").createServer(app);
-const io = require("socket.io")(http, {
+const server = http.createServer(app);
+
+// Setup socket.io with CORS
+const io = new Server(server, {
   cors: {
-    origin: "*"
+    origin: "*", // Render allows any origin for now, you can restrict later
+    methods: ["GET", "POST"]
   }
 });
 
-const path = require("path");
-app.use(express.static(path.join(__dirname)));
+const users = {};
 
+// Serve static files from public/
+app.use(express.static(path.join(__dirname, "public")));
+
+// Main page
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "index.html"));
+  res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
-// Socket.io logic here (same as before)
-let users = {};
-let sockets = {};
-
+// Socket.io logic
 io.on("connection", socket => {
   socket.on("user-joined", name => {
     users[socket.id] = name;
-    sockets[name] = socket.id;
     socket.broadcast.emit("new-user-joined", name);
   });
 
@@ -29,7 +35,7 @@ io.on("connection", socket => {
     socket.broadcast.emit("receive", {
       name: users[socket.id],
       message: data.message,
-      messageId: data.messageId
+      messageId: data.messageId,
     });
   });
 
@@ -39,11 +45,12 @@ io.on("connection", socket => {
 
   socket.on("disconnect", () => {
     socket.broadcast.emit("user-left", users[socket.id]);
-    delete sockets[users[socket.id]];
     delete users[socket.id];
   });
 });
 
-http.listen(process.env.PORT || 8000, () => {
-  console.log("Server started on port", process.env.PORT || 8000);
+// Port for local or deployment
+const PORT = process.env.PORT || 8000;
+server.listen(PORT, () => {
+  console.log(`✅ Server running on port ${PORT}`);
 });
