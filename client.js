@@ -1,4 +1,6 @@
-const socket = io("http://localhost:8000");
+// const socket = io("http://localhost:8000");
+const socket = io("https://chat-app-abc1.onrender.com");
+
 
 let messageIdCounter = 0;
 const name = prompt("Enter Your Name to Join the Chat:")?.trim();
